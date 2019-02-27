@@ -14,3 +14,27 @@
 // 
 
 package Nodes;
+
+simple L2Queue
+{
+    parameters:
+        int frameCapacity=default(0);
+        bool useCutThroughSwithcing=default(false);
+        @display("i=block/queue;q=queue");
+        @signal[qlen](type="long");
+        @signal[busy](type="bool");
+        @signal[queueingTime](type="sime_t");
+        @signal[drop](type="long");
+        @signal[txBytes](type="long");
+        @signal[rxBytes](type="long");
+        @stastic[qlen](title="queue length";record=vector?,timeavg,max;interpolationmode=sample-hold);
+        @stastic[busy](title="server bust state";record=vector?,timeavg;interpolationmode=sample-hold);
+        @stastic[queueingTime](title="queueing time at dequeue";unit=s;interpolationmode=none);
+        @stastic[drop](title="dropped packet byte length";unit=bytes;;record=vector?,count,sum,histogram;interpolationmode=none);
+        @stastic[txBytes](title="transmitting packet byte length";unit=bytes;record=vector?,count,sum,histogram;interpolationmode=none);
+        @stastic[rxBytes](title="received packet byte length";unit=bytes;record=vector?,count ,sum,histogram;interploationgmode=none);
+        gates:
+            input in;
+            output out;
+            inout line;
+}

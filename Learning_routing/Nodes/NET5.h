@@ -13,28 +13,21 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package Nodes;
+#ifndef __LEARNING_ROUING_NET5_H_
+#define __LEARNING_ROUING_NET5_H_
 
-module Node
+#include <omnetpp.h>
+
+using namespace omnetpp;
+
+/**
+ * TODO - Generated class
+ */
+class NET5 : public cSimpleModule
 {
-    parameters:
-        int address;
-        string appType;
-        @dispaly("i=misc/node_vs,gold");
-        gates:
-            inout port[];
-    submodules:
-        app: <appType> like IApp
-        {
-            parameters:
-                address=address;
-        }
-        routing:Routing{
-        parameters:
-            @display("p=140,30");
-        gates:
-            in[sizeof(port)];
-            out[sizeof(port)];
-            
-        }
-}
+  protected:
+    virtual void initialize();
+    virtual void handleMessage(cMessage *msg);
+};
+
+#endif

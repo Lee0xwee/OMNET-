@@ -13,28 +13,16 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-package Nodes;
+#include "NET5.h"
 
-module Node
+Define_Module(NET5);
+
+void NET5::initialize()
 {
-    parameters:
-        int address;
-        string appType;
-        @dispaly("i=misc/node_vs,gold");
-        gates:
-            inout port[];
-    submodules:
-        app: <appType> like IApp
-        {
-            parameters:
-                address=address;
-        }
-        routing:Routing{
-        parameters:
-            @display("p=140,30");
-        gates:
-            in[sizeof(port)];
-            out[sizeof(port)];
-            
-        }
+    // TODO - Generated method body
+}
+
+void NET5::handleMessage(cMessage *msg)
+{
+    // TODO - Generated method body
 }

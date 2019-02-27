@@ -4,11 +4,14 @@
  *  Created on: 2019Äê2ÔÂ26ÈÕ
  *      Author: Jason
  */
+#ifdef _MSC_VER
+#pragma warning(disable:4786)
+#endif
 
 # include <vector>
 # include <iostream>
 # include <omnetpp.h>
-# include <packet_m.h>
+# include "packet_m.h"
 
 using namespace omnetpp;
 using namespace std;
@@ -51,20 +54,20 @@ App::~App()
 
 void App::initialize()
 {
-    myAdress =par("address");
+    myAddress =par("address");
     packetLengthBytes=&par("packetLength");
-    sendIaTime=&par("sendIaTime");
+    sendIATime= &par("sendIaTime");
     pkCounter=0;
 
     WATCH(pkCounter);
     WATCH(myAddress);
 
-    const char *destAdderssPar=par("destAddresses");
+    const char *destAdderssesPar=par("destAddresses");
 
     cStringTokenizer tokenizer(destAdderssesPar);
     const char *token;
 
-    while((token==tokenizer.nextToken())!=nullptr)
+    while((token=tokenizer.nextToken())!=nullptr)
     {
         destAddresses.push_back(atoi(token));
     }
@@ -84,22 +87,25 @@ void App::initialize()
 
 void App::handleMessage(cMessage *msg)
 {
-    if(msg=generatePacket)
+    if(msg==generatePacket)
     {
         //sending packet
-        int destAddress= destAddress[intuniform(0,destAddress.size()-1)];
+        int destAddress= destAddresses[intuniform(0,destAddresses.size()-1)];
 
         char pkname[40];
-        sprintf(pkname,"pk-%d-to-%d-#1d",myAddress,destAddress,pkCounter);
-        EV<<"Generate packet "<<pkname<<endl;
+        sprintf(pkname,"pk-%d-to-%d-#1d",myAddress,destAddress,pkCounter++);
+        EV<<"Generate packet "<< pkname <<endl;
 
         Packet *pk=new Packet(pkname);
+
         pk->setByteLength(packetLengthBytes->intValue());
+
         pk->setKind(intuniform(0,7));
+        pk->setSrcAddr(myAddress);
         pk->setSrcAddr(destAddress);
         send(pk,"out");
 
-        scheduleAt(simTime()+sendTime->doubleValue(),generatePacket);
+        scheduleAt(simTime()+sendIATime->doubleValue(),generatePacket);
 
         if(hasGUI())
         {
@@ -114,11 +120,11 @@ void App::handleMessage(cMessage *msg)
         Packet *pk= check_and_cast<Packet *>(msg);
         EV<<"Received packet"<<pk->getName()<<"after"<<pk->getHopCount()<<"hops"<<endl;
         emit(endToEndDelaySignal,simTime()-pk->getCreationTime());
-        emit(hopCountSignal,pk->gethopCount());
+        emit(hopCountSignal,pk->getHopCount());
         emit(sourceAddressSignal,pk->getSrcAddr());
         if(hasGUI())
         {
-            getParentMoudle()->bubble("Arrived");
+            getParentModule()->bubble("Arrived");
         }
     }
 
